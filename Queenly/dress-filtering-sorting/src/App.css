@@ -87,3 +87,11 @@ select {
   color: #929191;
   border-radius: 4px;
 }
+
+button {
+  border: 1px solid #cecccc;
+  color: #929191;
+  border-radius: 4px;
+  background-color: transparent;
+
+}

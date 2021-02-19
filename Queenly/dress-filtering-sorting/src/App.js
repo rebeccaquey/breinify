@@ -255,7 +255,7 @@ class App extends React.Component {
                 </select>
               </form>
             </div>
-            <button onClick={this.handleClear}>Clear All Filters</button>
+            <button class="flex-child" onClick={this.handleClear}>Clear All Filters</button>
 
           </div>
 
