@@ -12,53 +12,69 @@ class App extends React.Component {
       allColors: [],
       selectedSizes: [],
       selectedColors: [],
-      sortBy: 'colors'
+      sortBy: 'colors',
     }
     this.onRemove = this.onRemove.bind(this);
     this.onSelect = this.onSelect.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleClear = this.handleClear.bind(this);
+    this.colormultiselectRef = React.createRef();
+    this.sizemultiselectRef = React.createRef();
   }
   
   componentDidMount() {
-    let colors = [];
-    let sizes = [];
+    let colors = new Set();
+    let sizes = new Set();
     let dressColors = [];
     let dressSizes = [];
 
     dressData.map((data) => {
-      if (!colors.includes(data.color)) {
-        colors.push(data.color)
+      if (!colors.has(data.color)) {
+        colors.add(data.color)
       }
-      if (!sizes.includes(data.size)) {
-        sizes.push(data.size);
+      if (!sizes.has(data.size)) {
+        sizes.add(data.size);
       }
     })
 
-    colors.sort();
+    for (let eachColor in colors) {
+      dressColors.add(eachColor);
+    }
+    for (let eachSize in sizes) {
+      dressSizes.add(eachSize);
+    }
 
-    for (let i = 0; i < colors.length; i++) {
-      let option = { color: colors[i]};
-      dressColors.push(option);
-    }
-    
-    sizes.sort((a,b) => (a-b));
-    for (let i = 0; i < sizes.length; i++) {
-      let option = { dressSize: sizes[i].toString()};
-      dressSizes.push(option);
-    }
+    colors.forEach(color => {
+      dressColors.push({color: color})
+    })
+
+    colors = [...colors].sort();
+    console.log(dressColors);
+    sizes = [...sizes].sort((a,b) => (a-b))
+
+    sizes.forEach(size => {
+      dressSizes.push({dressSize: size.toString()})
+    })
+    console.log(dressSizes);
 
     this.setState({
       allSizes: dressSizes,
       allColors: dressColors
     })
   }
-  handleSubmit() {
-
-  }
 
   handleChange(e) {
     this.setState({sortBy: e.target.value})
+  }
+
+  handleClear() {
+    this.colormultiselectRef.current.resetSelectedValues();
+    this.sizemultiselectRef.current.resetSelectedValues();
+
+    this.setState({
+      selectedColors: [],
+      selectedSizes: [],
+    })
   }
 
   onSelect(selectedList, selectedItem) {
@@ -74,10 +90,6 @@ class App extends React.Component {
   }
 
   onRemove(selectedList, removedItem) {
-    // console.log('selectedList', selectedList);
-    // console.log('removedItem', removedItem);
-    // console.log('selectedsizes', this.state.selectedSizes)
-    // console.log('selectedcolors', this.state.selectedColors)
     let colors = [];
     let sizes = []
     if (selectedList.length === 0) {
@@ -106,7 +118,10 @@ class App extends React.Component {
     }
   }
 
+
   render() {
+    // console.log('colors', this.state.allColors);
+    // console.log('sizes', this.state.allSizes)
     let displayed;
     if (this.state.sortBy === 'lowToHigh') {
       //display by price, low to high
@@ -181,6 +196,7 @@ class App extends React.Component {
       )
     }
 
+
     return (
       <div className="App">
         <header className="App-header">
@@ -215,6 +231,7 @@ class App extends React.Component {
               onRemove={this.onRemove}
               displayValue="color"
               showCheckbox="true"
+              ref={this.colormultiselectRef}
               />
             </div>
             <div class="flex-child sizes">
@@ -225,8 +242,10 @@ class App extends React.Component {
               onRemove={this.onRemove}
               displayValue="dressSize"
               showCheckbox="true"
+              ref={this.sizemultiselectRef}
               />
             </div>
+
             <div class="flex-child sort">
               <form onSubmit={this.handleSubmit}>
                 <select onChange={this.handleChange}>
@@ -236,6 +255,8 @@ class App extends React.Component {
                 </select>
               </form>
             </div>
+            <button onClick={this.handleClear}>Clear All Filters</button>
+
           </div>
 
         </div>
