@@ -13,7 +13,6 @@ app.use(express.json());
 app.use(express.urlencoded());
 
 app.get('/cards', (req, res) => {
-
   database.query(`select * from goodBoys`, (err, results) => {
     if (err) {
       res.status(404).send(err);
@@ -21,12 +20,9 @@ app.get('/cards', (req, res) => {
       res.status(200).send(results);
     }
   });
-
-
-})
+});
 
 app.post('/', (req, res) => {
-
   let result = [];
   req.body.forEach((ele) => {
     const formatTime = moment(ele.creationtime).format('lll');
@@ -38,7 +34,6 @@ app.post('/', (req, res) => {
       ]
     )
   })
-
   const postQuery = `insert into goodBoys (card_name, card_description, creationtime) values ?`;
 
   database.query(postQuery, [result], (err, results) => {
@@ -49,7 +44,29 @@ app.post('/', (req, res) => {
       res.status(200).send(results);
     }
   })
+});
 
+app.delete('/cards/:id', (req, res) => {
+  // console.log(req.params.id);
+  database.query(`delete from goodBoys where id = ${req.params.id}`, (err, results) => {
+    if (err) {
+      res.status(404).send(err);
+    } else {
+      res.status(200).send(results);
+    }
+  })
 })
+
+app.patch('/cards/:id', (req, res) => {
+  console.log(req.body.card_name, req.params.id)
+  database.query(`update goodBoys set card_name = '${req.body.card_name}' where id = ${req.params.id}`, (err, results) => {
+    if (err) {
+      res.status(404).send(err);
+    } else {
+      res.status(200).send(results);
+    }
+  })
+})
+
 
 app.listen(port, () => console.log(`Server listening on http://localhost:${port}`));

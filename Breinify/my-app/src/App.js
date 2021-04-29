@@ -4,6 +4,10 @@ import axios from 'axios';
 import CSVReader from 'react-csv-reader';
 import CardDeck from 'react-bootstrap/CardDeck';
 import Container from "react-bootstrap/Container";
+import Col from "react-bootstrap/Col";
+import Form from "react-bootstrap/Form";
+import FormControl from "react-bootstrap/FormControl";
+import Button from "react-bootstrap/Button";
 import EachCard from './EachCard.js';
 
 
@@ -11,6 +15,8 @@ import EachCard from './EachCard.js';
 function App() {
   const [cardData, setCardData] = useState();
   const [isLoaded, setIsLoaded] = useState(false);
+  const [searchWord, setSearchWord] = useState('');
+  const [filteredData, setFilteredData] = useState();
 
   const handleChange = (data) => {
     setIsLoaded(false);
@@ -35,11 +41,76 @@ function App() {
       .then(({data}) => {
         setCardData(data);
         setIsLoaded(true);
+        setFilteredData(data);
       })
       .catch(err => {
         console.log('Get request error: ', err)
     });
   }
+
+  const handleClick = () => {
+    setFilteredData(cardData.filter(name => name.card_name.toLowerCase().includes(searchWord.toLowerCase())))
+  }
+
+  const handleSearchChange = (e) => {
+    setSearchWord(e.target.value);
+    setFilteredData(cardData.filter(name => name.card_name.toLowerCase().includes(e.target.value.toLowerCase())))
+  }
+
+  const handleDeleteCard = (cardId) => {
+    axios.delete(`/cards/${cardId}`)
+    .then(result => {
+      console.log('Successful Delete request: ', result);
+    })
+    .catch(err => {
+      console.log('Delete request error: ', err);
+    })
+    .then(setIsLoaded(false))
+  }
+
+  const handleEditCard = (cardId, newName) => {
+    axios.patch(`/cards/${cardId}`, {card_name: newName})
+    .then(result => {
+      console.log('Successful Patch request: ', result);
+    })
+    .catch(err => {
+      console.log('Patch request error: ', err);
+    })
+    .then(setIsLoaded(false))
+  }
+
+  const sortByNameAsc = () => {
+    const sortedData = filteredData.sort((a,b) => {
+      let aName = a.card_name.toLowerCase(),
+      bName = b.card_name.toLowerCase();
+      if (aName < bName) {
+        return -1;
+      }
+      if (aName > bName) {
+        return 1;
+      }
+      return 0;
+    })
+
+    setFilteredData([...sortedData])
+  }
+
+  const sortByNameDesc = () => {
+    const sortedData = filteredData.sort((a,b) => {
+      let aName = a.card_name.toLowerCase(),
+      bName = b.card_name.toLowerCase();
+      if (aName < bName) {
+        return 1;
+      }
+      if (aName > bName) {
+        return -1;
+      }
+      return 0;
+    })
+
+    setFilteredData([...sortedData])
+  }
+  
 
   useEffect(() => {
     getCards();
@@ -48,14 +119,31 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <span>
+          Sort By: 
+          {' '}
+          <Button variant="outline-primary" onClick={sortByNameAsc}>
+          Ascending
+          </Button>
+          {' '}
+          <Button variant="outline-primary" onClick={sortByNameDesc}>
+          Descending
+          </Button>
+        </span>
         <CSVReader onFileLoaded={handleChange} parserOptions={papaparseOptions}/>
+        <Form inline>
+          <FormControl type="text" value={searchWord} onChange={handleSearchChange} className="mr-sm-2" placeholder="Search" />
+          <Button variant="outline-success" onClick={handleClick}>Search</Button>
+        </Form>
       </header>
       <Container fluid className="justify-content-start">
         <CardDeck>
-          {cardData && cardData.map((cardDetails, i) => (
+          {filteredData && filteredData.map((cardDetails, i) => (
             <EachCard 
               cardDetails= {cardDetails}
               key={i}
+              handleDeleteCard = {handleDeleteCard}
+              handleEditCard = {handleEditCard}
             />
           ))}
         </CardDeck>
@@ -65,5 +153,3 @@ function App() {
 }
 
 export default App;
-
-// col-sm-6 col-lg-3 py-2
