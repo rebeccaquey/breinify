@@ -36,9 +36,9 @@ Your app is ready to be deployed!
 
 ## Directions
 
-* Run `npm start`
-* Run `npm run server-dev`
-* Run `mysql -u root < database/schema.sql` 
+* `npm start`
+* `npm run server-dev`
+* `mysql -u root < database/schema.sql` 
   * This will create the database & tables
 * In the browser, click 'Choose File', and upload data.csv or data2.csv
   * This will load all of the cards from that csv file 
