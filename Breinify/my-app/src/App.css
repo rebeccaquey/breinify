@@ -17,9 +17,9 @@
   background-color: #282c34;
   min-height: 15vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-evenly;
   font-size: calc(10px + 2vmin);
   color: white;
 }
@@ -36,13 +36,3 @@
     transform: rotate(360deg);
   }
 }
-
-/* .row {
-  display: flex;
-  flex-wrap: wrap;
-} */
-
-/* .row > div[class*='col-'] {
-  display: flex;
-  flex:1 0 auto;
-} */

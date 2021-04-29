@@ -7,7 +7,6 @@ let generateCard = (num) => {
   const data = [];
   for (let i = 0; i < num; i++) {
     const card = {
-      // id: i + 1,
       name: faker.animal.dog(),
       description: faker.lorem.sentences(),
       creationTime: faker.date.between('2020-01-01', '2021-04-27')
