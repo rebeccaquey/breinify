@@ -52,3 +52,8 @@ Your app is ready to be deployed!
 * You can add a new card and save it to the database. Just type in the Name and Description, and the Creation Time will be the local time of the user. 
 * You can edit the name of any card
 * You can delete any card
+
+
+### Redis
+
+In server/index.js, redis can be used to cache the data. Since there are only 100 cards, it is fast to retrieve all of the data from the MySQL database, but once you start having a lot of cards, caching with redis will help with retrieval time because of it's in-memory store. 
