@@ -4,19 +4,19 @@ import axios from 'axios';
 import CSVReader from 'react-csv-reader';
 import CardDeck from 'react-bootstrap/CardDeck';
 import Container from "react-bootstrap/Container";
-import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import EachCard from './EachCard.js';
-
-
+import CardModal from './CardModal.js';
 
 function App() {
   const [cardData, setCardData] = useState();
   const [isLoaded, setIsLoaded] = useState(false);
   const [searchWord, setSearchWord] = useState('');
   const [filteredData, setFilteredData] = useState();
+  const [showModal, setShowModal] = useState(false);
+  const [cardToEdit, setCardToEdit] = useState();
 
   const handleChange = (data) => {
     setIsLoaded(false);
@@ -48,9 +48,9 @@ function App() {
     });
   }
 
-  const handleClick = () => {
-    setFilteredData(cardData.filter(name => name.card_name.toLowerCase().includes(searchWord.toLowerCase())))
-  }
+  // const handleClick = () => {
+  //   setFilteredData(cardData.filter(name => name.card_name.toLowerCase().includes(searchWord.toLowerCase())))
+  // }
 
   const handleSearchChange = (e) => {
     setSearchWord(e.target.value);
@@ -91,7 +91,6 @@ function App() {
       }
       return 0;
     })
-
     setFilteredData([...sortedData])
   }
 
@@ -107,10 +106,20 @@ function App() {
       }
       return 0;
     })
-
     setFilteredData([...sortedData])
   }
-  
+
+  const handleHideModal = () => {
+    setShowModal(false);
+  }
+
+  const handleModalClick = () => {
+    setShowModal(!showModal);
+  }
+
+  const handleEditClick = (e) => {
+    setCardToEdit(e)
+  }
 
   useEffect(() => {
     getCards();
@@ -133,9 +142,18 @@ function App() {
         <CSVReader onFileLoaded={handleChange} parserOptions={papaparseOptions}/>
         <Form inline>
           <FormControl type="text" value={searchWord} onChange={handleSearchChange} className="mr-sm-2" placeholder="Search" />
-          <Button variant="outline-success" onClick={handleClick}>Search</Button>
+          {/* <Button variant="outline-success" onClick={handleClick}>
+            Search
+          </Button> */}
         </Form>
       </header>
+      <CardModal 
+        show={showModal} 
+        onHide={handleHideModal} 
+        handleEditCard={handleEditCard} 
+        handleDeleteCard={handleDeleteCard} 
+        cardDetails={cardToEdit} 
+      />
       <Container fluid className="justify-content-start">
         <CardDeck>
           {filteredData && filteredData.map((cardDetails, i) => (
@@ -144,6 +162,8 @@ function App() {
               key={i}
               handleDeleteCard = {handleDeleteCard}
               handleEditCard = {handleEditCard}
+              handleModalClick = {handleModalClick}
+              handleEditClick = {handleEditClick}
             />
           ))}
         </CardDeck>
