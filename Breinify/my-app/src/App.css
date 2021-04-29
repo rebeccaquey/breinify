@@ -14,7 +14,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #bbb2e9;
   min-height: 15vh;
   display: flex;
   flex-direction: row;
@@ -40,4 +40,19 @@
 .icon {
   position: absolute;
   right: 15px;
+}
+
+#react-csv-reader-input.csv-input {
+  margin: 3px;
+  font-size: 15px;
+  width: 25vh;
+  border-color: black;
+}
+
+#file-upload-button {
+  border-radius: 5px;
+}
+
+.sort {
+  font-size: 16px;
 }

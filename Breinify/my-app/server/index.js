@@ -58,7 +58,7 @@ app.delete('/cards/:id', (req, res) => {
 })
 
 app.patch('/cards/:id', (req, res) => {
-  console.log(req.body.card_name, req.params.id)
+  // console.log(req.body.card_name, req.params.id)
   database.query(`update goodBoys set card_name = '${req.body.card_name}' where id = ${req.params.id}`, (err, results) => {
     if (err) {
       res.status(404).send(err);

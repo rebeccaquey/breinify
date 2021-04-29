@@ -9,6 +9,7 @@ import FormControl from "react-bootstrap/FormControl";
 import Button from "react-bootstrap/Button";
 import EachCard from './EachCard.js';
 import CardModal from './CardModal.js';
+import moment from 'moment';
 
 function App() {
   const [cardData, setCardData] = useState();
@@ -17,6 +18,7 @@ function App() {
   const [filteredData, setFilteredData] = useState();
   const [showModal, setShowModal] = useState(false);
   const [cardToEdit, setCardToEdit] = useState();
+  const [modalAction, setModalAction] = useState('');
 
   const handleChange = (data) => {
     setIsLoaded(false);
@@ -79,6 +81,23 @@ function App() {
     .then(setIsLoaded(false))
   }
 
+  const handleAddCard = (name, desc) => {
+    let data = [{
+      name: name,
+      description: desc,
+      creationtime: moment().format()
+    }]
+    console.log(data);
+    axios.post('http://localhost:3003/', data)
+    .then(result => {
+      console.log('Successful Post request: ', result);
+    })
+    .catch(err => {
+      console.log('Post request error: ', err);
+    })
+    .then(setIsLoaded(false))
+  }
+
   const sortByNameAsc = () => {
     const sortedData = filteredData.sort((a,b) => {
       let aName = a.card_name.toLowerCase(),
@@ -113,8 +132,9 @@ function App() {
     setShowModal(false);
   }
 
-  const handleModalClick = () => {
+  const handleModalClick = (action) => {
     setShowModal(!showModal);
+    setModalAction(action);
   }
 
   const handleEditClick = (e) => {
@@ -128,31 +148,35 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <span>
-          Sort By: 
+        <span className="sort">
+          Sort by: 
           {' '}
-          <Button variant="outline-primary" onClick={sortByNameAsc}>
-          Ascending
+          <Button variant="outline-dark" onClick={sortByNameAsc}>
+          A - Z
           </Button>
           {' '}
-          <Button variant="outline-primary" onClick={sortByNameDesc}>
-          Descending
+          <Button variant="outline-dark" onClick={sortByNameDesc}>
+          Z - A
           </Button>
         </span>
-        <CSVReader onFileLoaded={handleChange} parserOptions={papaparseOptions}/>
         <Form inline>
           <FormControl type="text" value={searchWord} onChange={handleSearchChange} className="mr-sm-2" placeholder="Search" />
           {/* <Button variant="outline-success" onClick={handleClick}>
             Search
           </Button> */}
         </Form>
+        <CSVReader onFileLoaded={handleChange} parserOptions={papaparseOptions}/>
+        <Button variant="outline-dark" onClick={handleModalClick}>
+          Add new card
+        </Button>
       </header>
       <CardModal 
         show={showModal} 
         onHide={handleHideModal} 
         handleEditCard={handleEditCard} 
-        handleDeleteCard={handleDeleteCard} 
-        cardDetails={cardToEdit} 
+        handleAddCard={handleAddCard}
+        cardDetails={cardToEdit}
+        modalAction={modalAction}
       />
       <Container fluid className="justify-content-start">
         <CardDeck>
@@ -161,7 +185,6 @@ function App() {
               cardDetails= {cardDetails}
               key={i}
               handleDeleteCard = {handleDeleteCard}
-              handleEditCard = {handleEditCard}
               handleModalClick = {handleModalClick}
               handleEditClick = {handleEditClick}
             />

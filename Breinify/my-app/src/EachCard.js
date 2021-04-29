@@ -6,7 +6,7 @@ import { BiTrash } from "react-icons/bi";
 
 function EachCard(props) {
   const handleClick = () => {
-    props.handleModalClick();
+    props.handleModalClick('edit');
     props.handleEditClick(props.cardDetails);
   }
 
